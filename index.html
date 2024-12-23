@@ -3,12 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Document</title>
+    <title>React From Base</title>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body>
     <div id="app"></div>
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <script
       crossorigin
@@ -21,31 +20,84 @@
     ></script>
 
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     <script type="text/babel">
       const appEl = document.querySelector("#app");
       const rootEl = ReactDOM.createRoot(appEl);
+
       function App() {
+        const [taskArr, setTaskArr] = React.useState([]);
+
+        const handleTaskUpdate = (value) => {
+          setTaskArr([...taskArr, value]);
+        };
+
         return (
           <div>
-            <h1>Task Manager</h1>
+            <AddTask onSubmit={handleTaskUpdate} />
+            <TaskList data={taskArr} />
           </div>
         );
       }
-      function AddTask() {
+
+      function AddTask({ onSubmit }) {
+        const inputEl = React.useRef(null);
+
+        // Activate when mounted
+        React.useEffect(() => {
+          inputEl.current.focus();
+        }, []);
+
+        return (
+          <form
+            className="flex justify-center items-center flex-col"
+            onSubmit={(e) => {
+              e.preventDefault();
+              onSubmit(inputEl.current.value);
+              inputEl.current.value = "";
+            }}
+          >
+            <input
+              type="text"
+              name=""
+              id=""
+              ref={inputEl}
+              className="border rounded border-black"
+            />
+            <button
+              type="submit"
+              className="bg-blue-500 text-white p-2 rounded"
+            >
+              Add task
+            </button>
+          </form>
+        );
+      }
+
+      function TaskList({ data }) {
+        console.log("from task list", data);
+        return (
+          <h1>
+            {data.map((item, index) => (
+              <SingleTask key={index} title={item} />
+            ))}
+          </h1>
+        );
+      }
+
+      function SingleTask({ title }) {
         return (
           <div>
-            <input type="text" className="text" />
-            <button>Add Task</button>
+            <p className="text-blue-700">{title}</p>
+            <button>delete</button>
           </div>
         );
       }
-      function TaskList() {}
 
       rootEl.render(
-        <>
+        <React.StrictMode>
           <App />
-          <TaskList />
-        </>
+        </React.StrictMode>
       );
     </script>
   </body>

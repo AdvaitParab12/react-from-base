@@ -26,10 +26,21 @@
       const rootEl = ReactDOM.createRoot(appEl);
 
       function App() {
-        const [taskArr, setTaskArr] = React.useState([]);
+        const [taskArr, setTaskArr] = React.useState([
+          {
+            id: 1,
+            title: "Task 1",
+          },
+          {
+            id: 2,
+            title: "Task 2",
+          },
+        ]);
 
         const handleTaskUpdate = (value) => {
-          setTaskArr([...taskArr, value]);
+          setTaskArr((prev) => {
+            return [...prev, value];
+          });
         };
 
         return (
@@ -53,7 +64,10 @@
             className="flex justify-center items-center flex-col"
             onSubmit={(e) => {
               e.preventDefault();
-              onSubmit(inputEl.current.value);
+              onSubmit({
+                id:crypto.randomUUID(),
+                title: inputEl.current.value,
+              });
               inputEl.current.value = "";
             }}
           >
@@ -78,8 +92,8 @@
         console.log("from task list", data);
         return (
           <h1>
-            {data.map((item, index) => (
-              <SingleTask key={index} title={item} />
+            {data.map((obj) => (
+              <SingleTask key={obj.id} title={obj.title} />
             ))}
           </h1>
         );
@@ -89,7 +103,7 @@
         return (
           <div>
             <p className="text-blue-700">{title}</p>
-            <button>delete</button>
+            <button className="bg-blue-700 p-2 rounded-xl">Delete</button>
           </div>
         );
       }
